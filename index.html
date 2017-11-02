@@ -31,7 +31,7 @@
 						 <button type="button" {{bindAttr class=":btn :btn-clear clearDisabled:disabled"}}>Clear</button>
 					</div>
 				</fieldset>
-			</form>	
+			</form>
 		</div>
 		<div class="span7">
 			<legend>
@@ -48,16 +48,7 @@
 	<legend>Input XML</legend>
 	{{#view App.XmlView}}
 	<textarea name="xml" class="field span5" placeholder="Paste raw XML data"><?xml version="1.0" ?>
-<book id="bk101">
-	<author>Gambardella, Matthew</author>
-	<title>XML Developer's Guide</title>
-	<price>
-		<normal>44.95</normal>
-		<discount>40.95</discount>
-	</price>
-	<publish_date>2000-10-01</publish_date>
-	<description>An in-depth look at creating applications with XML.</description>
-</book></textarea>
+<p id="pTag">left <b id="bTag">bold <i id="iTag">italic </i></b>right</p></textarea>
 	{{/view}}
 </script>
 
