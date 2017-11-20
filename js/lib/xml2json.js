@@ -19,7 +19,12 @@ function xml2json(xml, tab, attributes)
             { // element node ..
                 if (attributes && xml.attributes.length) // element with attributes  ..
                     for (var i = 0; i < xml.attributes.length; i++)
-                        o["_" + xml.attributes[i].nodeName] = (xml.attributes[i].nodeValue || "").toString();
+                    {
+                        var nodeName = xml.attributes[i].nodeName;
+                        nodeName = nodeName.replace(/:/g, "_");
+                        nodeName = nodeName.replace(/-/g, "_");
+                        o["_" + nodeName] = (xml.attributes[i].nodeValue || "").toString();
+                    }
                 if (xml.firstChild)
                 { // element has child nodes ..
                     var textChild = 0,
@@ -56,17 +61,31 @@ function xml2json(xml, tab, attributes)
                                 var textNode = {};
                                 textNode['element'] = n.nodeName;
                                 for (var i = 0; i < n.attributes.length; i++)
-                                    textNode["_" + n.attributes[i].nodeName] = (n.attributes[i].nodeValue || "").toString();
+                                {
+                                    var nodeName = n.attributes[i].nodeName;
+                                    nodeName = nodeName.replace(/:/g, "_");
+                                    nodeName = nodeName.replace(/-/g, "_");
+                                    textNode["_" + nodeName] = (n.attributes[i].nodeValue || "").toString();
+                                }
                                 for (var i = 0; i < n.attributes.length; i++)
-                                    n.attributes.removeNamedItem(n.attributes[i].name)
+                                {
+                                    n.attributes.removeNamedItem(n.attributes[i].name);
+                                }
                                 var node = X.toObj(n);
-                                if (node.content)
+                                if (node.content && node.element == "text" && n.children.length == 0)
+                                {
+                                    var textContentArray = [];
+                                    textContentArray.push(node);
+                                    textNode['content'] = textContentArray;
+                                }
+                                else if (node.content)
                                 {
                                     textNode['content'] = node.content;
                                 }
                                 else
                                 {
-                                    textNode['content'] = node;
+                                    //console.log(node);
+                                    //textNode['content'] = node;
                                 }
                                 newArray.push(textNode);
                             }
@@ -76,9 +95,15 @@ function xml2json(xml, tab, attributes)
                     else if (textChild)
                     { // pure text
                         if (attributes && xml.attributes.length)
-                            o["#text"] = X.escape(X.innerXml(xml));
+                        {
+                            o = {};
+                            o["element"] = "text";
+                            o["content"] = X.escape(X.innerXml(xml));
+                            // o["#text"] = X.escape(X.innerXml(xml));
+                        }
                         else
                         {
+                            o = {};
                             o["element"] = "text";
                             o["content"] = X.escape(X.innerXml(xml));
                             // o = X.escape(X.innerXml(xml));
